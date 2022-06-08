@@ -35,62 +35,61 @@
 
         let video;
         let poseNet;
-        let pose;
-        let skeleton;
-        let people = [];
-        var num;
+        // let pose;
+        // let skeleton;
+        let poses = [];
+        // var num;
+        let c;
+
+        let saveIt = false;
 
         function setup() {
-            createCanvas(1280, 960);
+            c = createCanvas(windowWidth, windowHeight);
+            // createCanvas(640, 480);
             video = createCapture(VIDEO);
+            video.elt.setAttribute('playsinline', '');
             video.hide();
-            poseNet = ml5.poseNet(video, modelLoaded);
-            poseNet.on('pose', gotPoses);
-        };
-
-        function Person(pose, skeleton) {
-            this.pose = pose;
-            this.skeleton = skeleton;
-            return this;
-        }
-
-        function gotPoses(poses) {
-            console.log(poses);
-            num = poses.length;
-            for (var i = 0; i < poses.length; i++) {
-                let person = new Person(poses[i].pose, poses[i].skeleton);
-                people[i] = person;
-            }
-            return people;
-            // if (poses.length > 0) {
-            //     person.pose = poses[0].pose;
-            //     person.skeleton = poses[0].skeleton;
-            // }
+            poseNet = ml5.poseNet(video, "multiple", modelLoaded);
+            poseNet.on('pose', function (results) {
+                poses = results;
+            });
         };
 
         function modelLoaded() {
             console.log('poseNet ready');
         };
 
+        // function zoom(x, y) {
+        //     var coef_x = windowWidth / 640;
+        //     var coef_y = windowHeight / 480;
+        //     x *= coef_x;
+        //     y *= coef_y;
+
+        // }
+
         function draw() {
-            image(video, 0, 0);
-            var people = gotPoses
-            if (people) {
-                for (var j = 0; j < num; j++) {
-                    pose = people[j].pose;
-                    skeleton = people[j].skeleton;
+            push();
+            translate(width, 0);
+            scale(-1, 1);
+            image(video, 0, 0, width, height);
+            var coef_x = windowWidth / 640;
+            var coef_y = windowHeight / 480;
+            if (poses) {
+                for (var j = 0; j < poses.length; j++) {
+                    var pose = poses[j].pose;
+                    var skeleton = poses[j].skeleton;
                     let eyeR = pose.rightEye;
                     let eyeL = pose.leftEye;
-                    let d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
+                    let d = dist(eyeR.x * coef_x, eyeR.y * coef_y, eyeL.x * coef_x, eyeL.y * coef_y);
                     fill(255, 0, 0);
-                    ellipse(pose.nose.x, pose.nose.y, d);
+                    ellipse(pose.nose.x * coef_x, pose.nose.y * coef_y, d);
                     fill(0, 0, 255);
-                    ellipse(pose.rightWrist.x, pose.rightWrist.y, 32);
-                    ellipse(pose.leftWrist.x, pose.leftWrist.y, 32);
+                    ellipse(pose.rightWrist.x * coef_x, pose.rightWrist.y * coef_y, 32);
+                    ellipse(pose.leftWrist.x * coef_x, pose.leftWrist.y * coef_y, 32);
 
                     for (let i = 0; i < pose.keypoints.length; i++) {
-                        let x = pose.keypoints[i].position.x;
-                        let y = pose.keypoints[i].position.y;
+                        let x = pose.keypoints[i].position.x * coef_x;
+                        let y = pose.keypoints[i].position.y * coef_y;
                         fill(0, 255, 0);
                         ellipse(x, y, 16, 16);
                     }
@@ -100,10 +99,24 @@
                         let b = skeleton[i][1];
                         strokeWeight(2);
                         stroke(255);
-                        line(a.position.x, a.position.y, b.position.x, b.position.y);
+                        line(a.position.x * coef_x, a.position.y * coef_y, b.position.x * coef_x, b.position.y * coef_y);
                     }
                 }
             }
+            if (key == 's') {
+                saveIt = true;
+            }
+            if (key == 'q') {
+                saveIt = false;
+            }
+            if (saveIt) {
+                saveFrames('./video_data/record', 'jpg', 1, 25, data => {
+                    console.log("record running...");
+                    console.log(data);
+                });
+            }
+            pop();
+
         };
     </script>
 </body>
