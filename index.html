@@ -39,10 +39,7 @@
 
         let video;
         let poseNet;
-        // let pose;
-        // let skeleton;
         let poses = [];
-        // var num;
         let c;
 
         let saveIt = false;
@@ -77,12 +74,14 @@
 
             if (poses) {
 
+                var people = [];
 
                 for (var j = 0; j < poses.length; j++) {
                     var pose = poses[j].pose;
                     var skeleton = poses[j].skeleton;
                     let eyeR = pose.rightEye;
                     let eyeL = pose.leftEye;
+                    people[j] = (pose.nose.x, pose.nose.y);
                     let d = dist(eyeR.x * coef + shft_x, eyeR.y * coef, eyeL.x * coef + shft_x, eyeL.y * coef);
 
                     /////////////////////////////// display //////////////////////////////
@@ -139,20 +138,29 @@
                     for (var k = 0; k < poses.length; k++) {
                         if (k !== j){
                             var pose_ = poses[k].pose;
-                            if (dist(pose.nose.x, pose.nose,y, pose_.nose.x, pose_.nose.y)*coef<100){
+                            if (dist(pose.nose.x, pose.nose.y, pose_.nose.x, pose_.nose.y)*coef<100){
                                 FLAG_alone = false;
                             }
                         }
                     }
                     if (FLAG_alone){
-                        // show cat accompany gif
+                        //TODO: show cat accompany gif
 
                     }
-                    ////////////////////////////// density //////////////////////////////
-                    // if(poses.length > )
-
                 }
 
+                ///////////////////////////// density //////////////////////////////////
+                if (people.length > 5){
+                        //TODO: call meanshift algorithm
+                        //TODO: firework effect
+                }
+
+
+
+
+
+
+                /////////////////////////// pause & record /////////////////////////////
                 // if (key == 's') {
                 //     saveIt = true;
                 //     startRecording();
@@ -167,6 +175,8 @@
                 //         console.log(data);
                 //     });
                 // }
+
+            
                 pop();
 
             };
