@@ -9,6 +9,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/addons/p5.sound.min.js"></script>
     <!-- ml5 -->
     <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+    <!-- 5.rec -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+    <script type="module" src="https://unpkg.com/p5.rec"></script>
+
 </head>
 
 <body>
@@ -52,6 +56,7 @@
             poseNet = ml5.poseNet(video, "multiple", modelLoaded);
             poseNet.on('pose', function (results) {
                 poses = results;
+                console.log(poses)
             });
         };
 
@@ -102,19 +107,23 @@
                         line(a.position.x * coef_x, a.position.y * coef_y, b.position.x * coef_x, b.position.y * coef_y);
                     }
                 }
+
             }
-            if (key == 's') {
-                saveIt = true;
-            }
-            if (key == 'q') {
-                saveIt = false;
-            }
-            if (saveIt) {
-                saveFrames('./video_data/record', 'jpg', 1, 25, data => {
-                    console.log("record running...");
-                    console.log(data);
-                });
-            }
+
+            // if (key == 's') {
+            //     saveIt = true;
+            //     startRecording();
+            // }
+            // if (key == 'q') {
+            //     saveIt = false;
+            //     stopRecording();
+            // }
+            // if (saveIt) {
+            //     saveFrames('./video_data/record', 'jpg', 1, 25, data => {
+            //         console.log("record running...");
+            //         console.log(data);
+            //     });
+            // }
             pop();
 
         };
