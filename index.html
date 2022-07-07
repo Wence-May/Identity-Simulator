@@ -42,11 +42,12 @@
         let poses = [];
         let c;
 
-        let saveIt = false;
+        // let saveIt = false;
 
         function setup() {
             c = createCanvas(windowWidth, windowHeight);
-            // createCanvas(640, 480);
+            // img_heart1 = loadImage("heart1.jpeg");
+            img_heart2 = loadImage("heart2.png");
             video = createCapture(VIDEO);
             video.elt.setAttribute('playsinline', '');
             video.hide();
@@ -71,6 +72,7 @@
             var coef = Math.min(windowWidth / 640, windowHeight / 480);
             var shft_x = (windowWidth - 640 * coef) / 2;
             image(video, shft_x, 0, 640 * coef, 480 * coef);
+
 
             if (poses) {
 
@@ -108,7 +110,7 @@
                         line(a.position.x * coef + shft_x, a.position.y * coef, b.position.x * coef + shft_x, b.position.y * coef);
                     }
 
-                    /////////////////////////////// any 2 //////////////////////////////
+                    /////////////////////////////// heartbeat //////////////////////////////
 
                     for (var k = j + 1; k < poses.length; k++) {
                         var pose_ = poses[k].pose;
@@ -123,11 +125,14 @@
                             var d3 = dist(pose_.rightWrist.x, pose_.rightWrist.y, pose.rightWrist.x, pose.rightWrist.y) * coef;
                             var d4 = dist(pose_.leftWrist.x, pose_.leftWrist.y, pose.leftWrist.x, pose.leftWrist.y) * coef;
                             if (Math.min(d1, d2, d3, d4) < 30) {
-                                fill(255, 0, 0);//TODO: draw a heart shape
+                                //draw a heart shape
                                 var x = (pose.nose.x + pose_.nose.x) * coef / 2 + shft_x;
                                 var y = (pose.nose.y + pose_.nose.y) * coef / 2;
-                                console.log("#####" + x, y);
+                                // console.log("#####" + x, y);
+                                // window.alert("heart");
+                                // fill(255, 255, 255);
                                 ellipse(x, y, d);
+                                image(img_heart2, x, y, d, d);
                             }
 
                         }
@@ -136,23 +141,23 @@
                     ///////////////////////////// left alone ////////////////////////////
                     var FLAG_alone = true;
                     for (var k = 0; k < poses.length; k++) {
-                        if (k !== j){
+                        if (k !== j) {
                             var pose_ = poses[k].pose;
-                            if (dist(pose.nose.x, pose.nose.y, pose_.nose.x, pose_.nose.y)*coef<100){
+                            if (dist(pose.nose.x, pose.nose.y, pose_.nose.x, pose_.nose.y) * coef < 100) {
                                 FLAG_alone = false;
                             }
                         }
                     }
-                    if (FLAG_alone){
+                    if (FLAG_alone) {
                         //TODO: show cat accompany gif
 
                     }
                 }
 
                 ///////////////////////////// density //////////////////////////////////
-                if (people.length > 5){
-                        //TODO: call meanshift algorithm
-                        //TODO: firework effect
+                if (people.length > 5) {
+                    //TODO: call meanshift algorithm
+                    //TODO: firework effect
                 }
 
 
@@ -176,7 +181,7 @@
                 //     });
                 // }
 
-            
+
                 pop();
 
             };
