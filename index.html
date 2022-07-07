@@ -64,68 +64,112 @@
             console.log('poseNet ready');
         };
 
-        // function zoom(x, y) {
-        //     var coef_x = windowWidth / 640;
-        //     var coef_y = windowHeight / 480;
-        //     x *= coef_x;
-        //     y *= coef_y;
-
-        // }
-
         function draw() {
+            //flip left and right
             push();
             translate(width, 0);
             scale(-1, 1);
-            image(video, 0, 0, width, height);
-            var coef_x = windowWidth / 640;
-            var coef_y = windowHeight / 480;
+
+            //scale to maximum on screen
+            var coef = Math.min(windowWidth / 640, windowHeight / 480);
+            var shft_x = (windowWidth - 640 * coef) / 2;
+            image(video, shft_x, 0, 640 * coef, 480 * coef);
+
             if (poses) {
+
+
                 for (var j = 0; j < poses.length; j++) {
                     var pose = poses[j].pose;
                     var skeleton = poses[j].skeleton;
                     let eyeR = pose.rightEye;
                     let eyeL = pose.leftEye;
-                    let d = dist(eyeR.x * coef_x, eyeR.y * coef_y, eyeL.x * coef_x, eyeL.y * coef_y);
-                    fill(255, 0, 0);
-                    ellipse(pose.nose.x * coef_x, pose.nose.y * coef_y, d);
-                    fill(0, 0, 255);
-                    ellipse(pose.rightWrist.x * coef_x, pose.rightWrist.y * coef_y, 32);
-                    ellipse(pose.leftWrist.x * coef_x, pose.leftWrist.y * coef_y, 32);
+                    let d = dist(eyeR.x * coef + shft_x, eyeR.y * coef, eyeL.x * coef + shft_x, eyeL.y * coef);
+
+                    /////////////////////////////// display //////////////////////////////
+                    fill(255, 0, 0);//red - nose
+                    ellipse(pose.nose.x * coef + shft_x, pose.nose.y * coef, d);
+
+                    fill(0, 0, 255);//blue - wrists
+                    ellipse(pose.rightWrist.x * coef + shft_x, pose.rightWrist.y * coef, 32);
+                    ellipse(pose.leftWrist.x * coef + shft_x, pose.leftWrist.y * coef, 32);
 
                     for (let i = 0; i < pose.keypoints.length; i++) {
-                        let x = pose.keypoints[i].position.x * coef_x;
-                        let y = pose.keypoints[i].position.y * coef_y;
-                        fill(0, 255, 0);
+                        let x = pose.keypoints[i].position.x * coef + shft_x;
+                        let y = pose.keypoints[i].position.y * coef;
+                        fill(0, 255, 0);//green 
                         ellipse(x, y, 16, 16);
                     }
 
+                    //calculate distances ~ relations
                     for (let i = 0; i < skeleton.length; i++) {
                         let a = skeleton[i][0];
                         let b = skeleton[i][1];
                         strokeWeight(2);
                         stroke(255);
-                        line(a.position.x * coef_x, a.position.y * coef_y, b.position.x * coef_x, b.position.y * coef_y);
+                        line(a.position.x * coef + shft_x, a.position.y * coef, b.position.x * coef + shft_x, b.position.y * coef);
                     }
+
+                    /////////////////////////////// any 2 //////////////////////////////
+
+                    for (var k = j + 1; k < poses.length; k++) {
+                        var pose_ = poses[k].pose;
+                        // var skeleton_ = poses[k].skeleton;
+                        let eyeR_ = pose_.rightEye;
+                        let eyeL_ = pose_.leftEye;
+                        let d_ = dist(eyeR_.x * coef + shft_x, eyeR_.y * coef, eyeL_.x * coef + shft_x, eyeL_.y * coef);
+                        console.log("****" + d, d_);
+                        if (-40 < d - d_ < 40) {
+                            var d1 = dist(pose.rightWrist.x, pose.rightWrist.y, pose_.leftWrist.x, pose_.leftWrist.y) * coef;
+                            var d2 = dist(pose_.rightWrist.x, pose_.rightWrist.y, pose.leftWrist.x, pose.leftWrist.y) * coef;
+                            var d3 = dist(pose_.rightWrist.x, pose_.rightWrist.y, pose.rightWrist.x, pose.rightWrist.y) * coef;
+                            var d4 = dist(pose_.leftWrist.x, pose_.leftWrist.y, pose.leftWrist.x, pose.leftWrist.y) * coef;
+                            if (Math.min(d1, d2, d3, d4) < 30) {
+                                fill(255, 0, 0);//TODO: draw a heart shape
+                                var x = (pose.nose.x + pose_.nose.x) * coef / 2 + shft_x;
+                                var y = (pose.nose.y + pose_.nose.y) * coef / 2;
+                                console.log("#####" + x, y);
+                                ellipse(x, y, d);
+                            }
+
+                        }
+
+                    }
+                    ///////////////////////////// left alone ////////////////////////////
+                    var FLAG_alone = true;
+                    for (var k = 0; k < poses.length; k++) {
+                        if (k !== j){
+                            var pose_ = poses[k].pose;
+                            if (dist(pose.nose.x, pose.nose,y, pose_.nose.x, pose_.nose.y)*coef<100){
+                                FLAG_alone = false;
+                            }
+                        }
+                    }
+                    if (FLAG_alone){
+                        // show cat accompany gif
+
+                    }
+                    ////////////////////////////// density //////////////////////////////
+                    // if(poses.length > )
+
                 }
 
-            }
+                // if (key == 's') {
+                //     saveIt = true;
+                //     startRecording();
+                // }
+                // if (key == 'q') {
+                //     saveIt = false;
+                //     stopRecording();
+                // }
+                // if (saveIt) {
+                //     saveFrames('./video_data/record', 'jpg', 1, 25, data => {
+                //         console.log("record running...");
+                //         console.log(data);
+                //     });
+                // }
+                pop();
 
-            // if (key == 's') {
-            //     saveIt = true;
-            //     startRecording();
-            // }
-            // if (key == 'q') {
-            //     saveIt = false;
-            //     stopRecording();
-            // }
-            // if (saveIt) {
-            //     saveFrames('./video_data/record', 'jpg', 1, 25, data => {
-            //         console.log("record running...");
-            //         console.log(data);
-            //     });
-            // }
-            pop();
-
+            };
         };
     </script>
 </body>
