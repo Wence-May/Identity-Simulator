@@ -52,7 +52,7 @@
             img_heart = loadImage("heart2.png");
             img_firework = createImg("firework.gif");
             img_friend = createImg("friend.gif");
-            img_friend.position(windowWidth*2,windowHeight*2);
+            // img_friend.position(windowWidth*2,windowHeight*2);
             video = createCapture(VIDEO);
             video.elt.setAttribute('playsinline', '');
             video.hide();
@@ -155,7 +155,7 @@
                             }
                         }
                     }
-                    if (poses.length > 1) {
+                    if (poses.length > 2) {
                         if (FLAG_alone) {
                             //TODO: show cat accompany gif
                             img_friend.position(windowWidth-(pose.nose.x * coef + shft_x + 30), (pose.nose.y * coef));
@@ -167,7 +167,7 @@
 
 
                 ///////////////////////////// density //////////////////////////////////
-                if (poses.length > 5) {
+                if (poses.length > 3) {
                     //TODO: call meanshift algorithm
                     //firework effect
                     img_firework.position(windowWidth / 2, windowHeight * 2 / 3);
