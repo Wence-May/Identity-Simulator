@@ -145,7 +145,7 @@
 
                     }
                     ///////////////////////////// left alone ////////////////////////////
-                    var FLAG_alone = true;//TODO: fix
+                    var FLAG_alone = true;
                     for (var k = 0; k < poses.length; k++) {
                         if (k !== j) {
                             var pose_ = poses[k].pose;
@@ -157,7 +157,7 @@
                     }
                     if (poses.length > 2) {
                         if (FLAG_alone) {
-                            //TODO: show cat accompany gif
+                            //show cat accompany gif
                             img_friend.position(windowWidth-(pose.nose.x * coef + shft_x + 30), (pose.nose.y * coef));
                         }
                     }
@@ -168,7 +168,7 @@
 
                 ///////////////////////////// density //////////////////////////////////
                 if (poses.length > 3) {
-                    //TODO: call meanshift algorithm
+                    //TODO: call meanshift algorithm -- update: forget about meanshift pls
                     //firework effect
                     img_firework.position(windowWidth / 2, windowHeight * 2 / 3);
                 }
